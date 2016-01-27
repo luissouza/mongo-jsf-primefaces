@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+<h:head>
+	
+
+</h:head>
+<h:body>
+
+	<f:metadata>
+		<f:event listener="#{vendasBean.init()}"
+			type="preRenderView"></f:event>
+	</f:metadata>
+	
+	<p:growl id="messages" />
+
+	<h:form id="formFiltros">
+		<p:panel header="Filtros">
+			
+			<p:selectOneMenu id="cliente-consulta"
+				value="#{vendasBean.codigoCliente}">
+				<f:selectItem itemLabel="Selecione o Cliente" itemValue="0"></f:selectItem>
+				<f:selectItems value="#{vendasBean.listClientes}" var="cli"
+					itemLabel="#{cli.nome}" itemValue="#{cli.codigo}" />
+				<p:ajax event="change" listener="#{vendasBean.listarVendas()}"
+					update=":formList" execute="@this" />
+			</p:selectOneMenu>
+		
+			
+			<p:spacer width="5"></p:spacer>
+
+			<p:selectOneMenu id="produto-consulta"
+				value="#{vendasBean.codigoProduto}">
+				<f:selectItem itemLabel="Selecione o Produto" itemValue="0"></f:selectItem>
+				<f:selectItems value="#{vendasBean.listProdutos}" var="pro"
+					itemLabel="#{pro.descricao}" itemValue="#{pro.codigo}" />
+				<p:ajax event="change" listener="#{vendasBean.listarVendas()}"
+					update=":formList" execute="@this" />
+			</p:selectOneMenu>
+
+
+		</p:panel>
+
+	</h:form>
+
+	<p:spacer height="3"></p:spacer>
+
+	<h:form id="formList">
+			<p:commandButton icon="ui-icon-tag" value="Novo Produto"
+				styleClass="ui-priority-primary"
+				oncomplete="PF('produtoDlg').show()" process="@this">
+			</p:commandButton>
+
+			<p:spacer width="7"></p:spacer>
+
+			<p:commandButton icon="ui-icon-person" value="Novo Cliente"
+				styleClass="ui-priority-primary"
+				oncomplete="PF('clienteDlg').show()" process="@this">
+			</p:commandButton>
+
+			<p:spacer width="7"></p:spacer>
+
+			<p:commandButton icon="ui-icon-cart" value="Nova Venda"
+				styleClass="ui-priority-primary"
+				oncomplete="PF('novaVendaDlg').show()" process="@this">
+			</p:commandButton>
+			
+			
+			<p:spacer width="7"></p:spacer>
+			
+			
+			<p:button href="/relatorioServlet?pCodigoCliente=#{vendasBean.codigoCliente}"
+			icon="ui-icon-document" styleClass="ui-priority-document" value="Emitir Relatório"></p:button>	
+			
+		
+			<p:separator></p:separator>
+		<p:panel>
+
+			<p:dataTable
+				value="#{vendasBean.list}"
+				var="vendas" emptyMessage="Nenhuma venda a ser exibida."
+				paginator="true" rows="10" paginatorPosition="bottom"
+				scrollable="false" id="dataTable">
+	
+				<p:column headerText="Cliente" style="width: 13px; text-align: center;">
+				<h:outputText	value="#{vendas.codigoCliente} - #{vendas.nomeCliente}" />
+				</p:column>
+
+				<p:column headerText="Produto" style="width: 50px; text-align: center;">
+				<h:outputText	value="#{vendas.codigoProduto} - #{vendas.descricaoProduto}" />
+				</p:column>
+
+				<p:column headerText="Quantidade" style="width: 1px; text-align: center;">
+				<h:outputText	value="#{vendas.quantidade}" />
+				</p:column>
+
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	
+	<h:form id="formCadastroProduto"
+		onkeypress="return event.keyCode != 13">
+		<p:dialog id="produtoDialog" header="Novo Produto"
+			widgetVar="produtoDlg" modal="true" height="192" width="509">
+
+
+			<p:panel style="border: 1px solid #dddddd !important;"
+				id="panelProduto">
+				<p:messages id="messages" />
+
+				<h:panelGrid columns="2">
+
+					<p:outputLabel value="Descrição:  " />
+
+					<p:columnGroup>
+						<p:inputText maxlength="60" size="40" id="descricao"
+							value="#{vendasBean.produtos.descricao}" />
+					</p:columnGroup>
+
+					<p:outputLabel value="Preço:  " />
+
+					<p:columnGroup>
+						<p:inputText maxlength="60" size="40" id="preco"
+							value="#{vendasBean.produtos.preco}" />
+					</p:columnGroup>
+
+
+					<p:outputLabel value="Ativo: " />
+
+					<p:columnGroup>
+						<p:selectOneMenu id="ativo"
+						value="#{vendasBean.produtos.ativo}">
+						<f:selectItem itemLabel="Ativo" itemValue="S"></f:selectItem>
+						<f:selectItem itemLabel="Inativo" itemValue="N"></f:selectItem>
+							<p:ajax event="change" process="@this" />
+					</p:selectOneMenu>	
+					</p:columnGroup>
+
+				</h:panelGrid>
+
+				<p:separator></p:separator>
+
+				<p:commandButton icon="ui-icon-close" value="Cancelar"
+					oncomplete="PF('produtoDlg').hide()" />
+
+				<p:commandButton icon="ui-icon-disk" value="Salvar"
+					id="btnSalvarProduto" process="@this, descricao, preco, ativo"
+					styleClass="ui-priority-primary" update=":messages"
+					actionListener="#{vendasBean.novoProduto}"
+					oncomplete="PF('produtoDlg').hide()">
+
+				</p:commandButton>
+
+			</p:panel>
+
+		</p:dialog>
+	</h:form>
+
+	<h:form id="formCadastroCliente"
+		onkeypress="return event.keyCode != 13">
+		<p:dialog id="clienteDialog" header="Novo Cliente"
+			widgetVar="clienteDlg" modal="true" height="192" width="509">
+
+
+			<p:panel style="border: 1px solid #dddddd !important;"
+				id="panelCliente">
+				<p:messages id="messages" />
+
+				<h:panelGrid columns="2">
+
+					<p:outputLabel value="Nome: " />
+					<p:columnGroup>
+						<p:inputText maxlength="60" size="40" id="nome"
+							value="#{vendasBean.clientes.nome}" />
+					</p:columnGroup>
+
+					<p:outputLabel value="CPF: " />
+					<p:columnGroup>
+						<p:inputText maxlength="60" size="40" id="cpf"
+							value="#{vendasBean.clientes.cpf}" />
+					</p:columnGroup>
+
+
+					<p:outputLabel value="RG:  " />
+					<p:columnGroup>
+						<p:inputText maxlength="60" size="40" id="rg"
+							value="#{vendasBean.clientes.rg}" />
+					</p:columnGroup>
+
+					<p:outputLabel value="Endereço:  " />
+					<p:columnGroup>
+						<p:inputText maxlength="60" size="40" id="endereco"
+							value="#{vendasBean.clientes.endereco}" />
+						<p:spacer width="3"></p:spacer>
+
+						<p:outputLabel value="Nº:  " />
+
+						<p:inputText maxlength="5" size="5" id="numero"
+							value="#{vendasBean.clientes.numero}" />
+					</p:columnGroup>
+
+				</h:panelGrid>
+
+				<p:separator></p:separator>
+
+				<p:commandButton icon="ui-icon-close" value="Cancelar"
+					oncomplete="PF('clienteDlg').hide()" />
+
+				<p:commandButton icon="ui-icon-disk" value="Salvar"
+					id="btnSalvarCliente"
+					process="@this, nome, cpf, rg, endereco, numero" update=":messages"
+					styleClass="ui-priority-primary" action="#{vendasBean.novoCliente}"
+					oncomplete="PF('clienteDlg').hide()">
+
+				</p:commandButton>
+
+			</p:panel>
+
+		</p:dialog>
+	</h:form>
+
+	<h:form id="formCadastroNovaVenda"
+		onkeypress="return event.keyCode != 13">
+		<p:dialog id="novaVendaDialog" header="Nova Venda"
+			widgetVar="novaVendaDlg" modal="true" height="192" width="509">
+
+
+			<p:panel style="border: 1px solid #dddddd !important;"
+				id="panelNovaVenda">
+				<p:messages id="messages" />
+
+				<h:panelGrid columns="2">
+
+					<p:outputLabel value="Cliente: " />
+					<p:columnGroup>
+						<p:selectOneMenu id="cliente-cadastro"
+						value="#{vendasBean.vendas.codigoCliente}">
+						<f:selectItem itemLabel="Selecione o Cliente" itemValue="0"></f:selectItem>
+						<f:selectItems value="#{vendasBean.listClientes}" var="cli" itemLabel="#{cli.nome}" itemValue="#{cli.codigo}" />
+							
+					</p:selectOneMenu>		
+
+					</p:columnGroup>
+
+					<p:outputLabel value="Produto: " />
+					<p:columnGroup>
+						<p:selectOneMenu id="produto-consulta"
+						value="#{vendasBean.vendas.codigoProduto}">
+						<f:selectItem itemLabel="Selecione o Produto" itemValue="0"></f:selectItem>
+						<f:selectItems value="#{vendasBean.listProdutos}" var="pro" itemLabel="#{pro.descricao}" itemValue="#{pro.codigo}" />
+							
+					</p:selectOneMenu>	
+
+					</p:columnGroup>
+
+					<p:outputLabel value="Quantidade: " />
+					<p:columnGroup>
+						<p:inputText maxlength="60" size="5" id="quantidade"/>
+					</p:columnGroup>
+
+				</h:panelGrid>
+
+				<p:separator></p:separator>
+
+				<p:commandButton icon="ui-icon-close" value="Cancelar"
+					oncomplete="PF('taxaDlg').hide()" />
+
+				<p:commandButton icon="ui-icon-disk" value="Salvar" 
+					id="btnSalvarVenda" styleClass="ui-priority-primary" update=":messages, :formList"
+					actionListener="#{vendasBean.novaVenda}" oncomplete="PF('novaVendaDlg').hide()">
+
+				</p:commandButton>
+
+			</p:panel>
+
+		</p:dialog>
+	</h:form>
+
+</h:body>
+</html>

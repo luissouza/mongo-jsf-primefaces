@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub-relatorio" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="6e08ef81-e180-4fec-bec2-0b7c73f38a87">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="pCodigoCliente" class="java.lang.String"/>
+	<queryString language="MongoDbQuery">
+		<![CDATA[{'collectionName' : 'vendas', 'findQuery' : {'codigocliente' : {'$eq' : $P{pCodigoCliente}}}}]]>
+	</queryString>
+	<field name="_id" class="org.bson.types.ObjectId"/>
+	<field name="codigo" class="java.lang.String"/>
+	<field name="codigocliente" class="java.lang.String"/>
+	<field name="codigoproduto" class="java.lang.String"/>
+	<field name="datavenda" class="java.lang.String"/>
+	<field name="descricaoproduto" class="java.lang.String"/>
+	<field name="nomecliente" class="java.lang.String"/>
+	<field name="quantidade" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement x="116" y="-1" width="68" height="15" uuid="412ea91b-5a1b-4cb9-a589-54c1e769a200"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Quantidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="104" height="15" uuid="956a623e-4fe1-4284-bd72-f7899feb6424"/>
+				<textElement>
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descrição Produto]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="208" y="-1" width="68" height="15" uuid="b0c52038-d752-4d7a-9cc5-60da49be1ef8"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Data Venda]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="1" width="104" height="20" uuid="0a4adfa7-8ff1-4e17-9f11-06c476c2ac63"/>
+				<textElement>
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigoproduto} + " - " + $F{descricaoproduto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="115" y="0" width="68" height="20" uuid="22ed9176-615c-4013-85a8-59a922e758d9"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="208" y="0" width="68" height="20" uuid="4976d387-368c-476e-8300-4fefcf168f0f"/>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{datavenda}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>
